@@ -14,6 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.motolola.restfulwebservices.bean.User;
 import com.motolola.restfulwebservices.bean.UserDaoService;
+import com.motolola.restfulwebservices.exception.UserNotFoundException;
 
 @RestController
 public class UserResourceController {
@@ -30,9 +31,15 @@ public class UserResourceController {
 	
 	@GetMapping("/user/{id}")
 	public User retriveUser(@PathVariable int id) {
-		return service.findOne(id);
+		
+		User user = service.findOne(id);
+		
+		if (user == null) 
+			throw new UserNotFoundException("id -"+ id);
+		
+		return user;
 	}
-	
+
 	@PostMapping("user")
 	public ResponseEntity<User> createUser(@RequestBody User user) {
 		User savedUser = service.save(user);
